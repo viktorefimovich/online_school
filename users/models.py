@@ -31,7 +31,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return f"{self.pk} | {self.email}"
+        return self.username
 
     class Meta:
         verbose_name = "Пользователь"
