@@ -3,10 +3,10 @@ from .models import User, Payment
 
 
 @admin.register(User)
-class MailingUserAdmin(admin.ModelAdmin):
-    list_display = ("id", "email", "phone", "city")
+class UserAdmin(admin.ModelAdmin):
+    list_display = ("id", "email")
     list_filter = list_display
-    search_fields = ("email", "phone", "city")
+    search_fields = ("email",)
 
 
 @admin.register(Payment)
