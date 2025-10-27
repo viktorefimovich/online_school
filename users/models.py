@@ -71,7 +71,7 @@ class User(AbstractUser):
 
 class Payment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь",
-                             help_text="Укажите пользователя")
+                             help_text="Укажите пользователя", related_name="payments")
     amount = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="Сумма оплаты",
                                  help_text="Укажите сумму оплаты")
     payment_method = models.CharField(max_length=20, choices=[("cash", "Наличные"), ("transfer", "Перевод на счёт")],

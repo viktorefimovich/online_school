@@ -12,6 +12,11 @@ class UserViewSet(ModelViewSet):
     lookup_field = "email"
 
 
+class UserRetrieveAPIView(RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
 class PaymentCreateAPIView(CreateAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer

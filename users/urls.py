@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from users.apps import UsersConfig
 from users.views import UserViewSet, PaymentListAPIView, PaymentCreateAPIView, PaymentRetrieveAPIView, \
-    PaymentUpdateAPIView, PaymentDestroyAPIView
+    PaymentUpdateAPIView, PaymentDestroyAPIView, UserRetrieveAPIView
 
 app_name = UsersConfig.name
 
@@ -11,6 +11,7 @@ router = DefaultRouter()
 router.register(r"", UserViewSet, basename="users")
 
 urlpatterns = [
+    path("<int:pk>/", UserRetrieveAPIView.as_view(), name="user-retrieve"),
     path("payments/", PaymentListAPIView.as_view(), name="payments-list"),
     path("payments/create/", PaymentCreateAPIView.as_view(), name="payments-create"),
     path("payments/<int:pk>/", PaymentRetrieveAPIView.as_view(), name="payments-retrieve"),
