@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import User, Payment
+
+from .models import Payment, User
 
 
 @admin.register(User)
@@ -14,4 +15,4 @@ class PaymentAdmin(admin.ModelAdmin):
     list_display = ("user", "payment_date", "course", "lesson", "amount", "payment_method")
     search_fields = ("user",)
     list_filter = list_display
-    ordering = ['-payment_date']
+    ordering = ["-payment_date"]

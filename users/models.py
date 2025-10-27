@@ -11,7 +11,7 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         """Создает и возвращает пользователя с email и паролем"""
         if not email:
-            raise ValueError(_('The Email must be set'))
+            raise ValueError("The Email must be set")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -20,13 +20,13 @@ class CustomUserManager(BaseUserManager):
 
     def create_superuser(self, email, password=None, **extra_fields):
         """Создает и возвращает суперпользователя с email и паролем"""
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Superuser must have is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Superuser must have is_superuser=True.')
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
 
         return self.create_user(email, password, **extra_fields)
 
@@ -70,12 +70,22 @@ class User(AbstractUser):
 
 
 class Payment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь",
-                             help_text="Укажите пользователя", related_name="payments")
-    amount = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="Сумма оплаты",
-                                 help_text="Укажите сумму оплаты")
-    payment_method = models.CharField(max_length=20, choices=[("cash", "Наличные"), ("transfer", "Перевод на счёт")],
-                                      verbose_name="Способ оплаты", help_text="Укажите способ оплаты")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        help_text="Укажите пользователя",
+        related_name="payments",
+    )
+    amount = models.DecimalField(
+        max_digits=8, decimal_places=2, verbose_name="Сумма оплаты", help_text="Укажите сумму оплаты"
+    )
+    payment_method = models.CharField(
+        max_length=20,
+        choices=[("cash", "Наличные"), ("transfer", "Перевод на счёт")],
+        verbose_name="Способ оплаты",
+        help_text="Укажите способ оплаты",
+    )
     payment_date = models.DateField(verbose_name="Дата оплаты", help_text="Укажите дату оплаты")
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
     lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True, blank=True)
