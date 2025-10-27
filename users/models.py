@@ -52,7 +52,7 @@ class Payment(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"Платеж {self.user}, сумма {self.amount}"
+        return f"Платеж {self.user} за {self.course if self.course else self.lesson} сумма {self.amount}"
 
     class Meta:
         verbose_name = "Платеж"
