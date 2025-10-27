@@ -20,7 +20,8 @@ class CourseDetailSerializer(ModelSerializer):
     count_lessons_in_course = SerializerMethodField()
     lessons = LessonSerializer(read_only=True, many=True)
 
-    def get_count_lessons_in_course(self, obj):
+    @staticmethod
+    def get_count_lessons_in_course(obj):
         return obj.lessons.count()
 
     class Meta:
