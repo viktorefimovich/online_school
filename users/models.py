@@ -77,16 +77,14 @@ class Payment(models.Model):
         help_text="Укажите пользователя",
         related_name="payments",
     )
-    amount = models.DecimalField(
-        max_digits=8, decimal_places=2, verbose_name="Сумма оплаты", help_text="Укажите сумму оплаты"
-    )
+    amount = models.PositiveIntegerField(verbose_name="Сумма оплаты", help_text="Укажите сумму оплаты")
     payment_method = models.CharField(
         max_length=20,
         choices=[("cash", "Наличные"), ("transfer", "Перевод на счёт")],
         verbose_name="Способ оплаты",
         help_text="Укажите способ оплаты",
     )
-    payment_date = models.DateField(verbose_name="Дата оплаты", help_text="Укажите дату оплаты")
+    payment_date = models.DateTimeField(verbose_name="Дата оплаты", help_text="Укажите дату оплаты")
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
     lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True, blank=True)
 
