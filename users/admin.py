@@ -1,3 +1,18 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Payment, User
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ("id", "email")
+    list_filter = list_display
+    search_fields = ("email",)
+
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ("user", "payment_date", "course", "lesson", "amount", "payment_method")
+    search_fields = ("user",)
+    list_filter = list_display
+    ordering = ["-payment_date"]

@@ -33,6 +33,7 @@ class Lesson(models.Model):
         help_text="Укажите курс",
         blank=True,
         null=True,
+        related_name="lessons",
     )
     description = models.TextField(verbose_name="Описание", help_text="Введите описание")
     preview = models.ImageField(
