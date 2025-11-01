@@ -31,6 +31,7 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     Кастомный JWT-сериализатор, который возвращает access, refresh и данные пользователя.
     """
+    username_field = "email"
 
     @classmethod
     def get_token(cls, user):
@@ -41,10 +42,7 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data: Dict[str, Any] = super().validate(attrs)
 
-        data["user"] = {
-            "id": self.user.id,
-            "email": self.user.email
-        }
+        data["user"] = UserSerializer(self.user).data
 
         return data
 
