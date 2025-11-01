@@ -7,13 +7,13 @@ from users.views import (
     PaymentListAPIView,
     PaymentRetrieveAPIView,
     PaymentUpdateAPIView,
+    UserDestroyAPIView,
+    UserListAPIView,
+    UserRegisterAPIView,
     UserRetrieveAPIView,
     UserTokenObtainPairView,
     UserTokenRefreshView,
-    UserListAPIView,
-    UserRegisterAPIView,
     UserUpdateAPIView,
-    UserDestroyAPIView,
 )
 
 app_name = UsersConfig.name

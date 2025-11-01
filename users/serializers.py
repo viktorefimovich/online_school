@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
@@ -11,6 +11,7 @@ from .models import Payment, User
 
 class PaymentSerializer(ModelSerializer):
     """Суриализатор платежей"""
+
     class Meta:
         model = Payment
         fields = "__all__"
@@ -18,6 +19,7 @@ class PaymentSerializer(ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор пользователя с добавлением поля платежи"""
+
     payments = PaymentSerializer(many=True, read_only=True)
 
     class Meta:
@@ -29,6 +31,7 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     Кастомный JWT-сериализатор, который возвращает access, refresh и данные пользователя.
     """
+
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
@@ -39,9 +42,9 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
         data: Dict[str, Any] = super().validate(attrs)
 
         data["user"] = {
-            'id': self.user.id,
-            'email': self.user.email,
-            'username': self.user.username,
+            "id": self.user.id,
+            "email": self.user.email,
+            "username": self.user.username,
         }
 
         return data
