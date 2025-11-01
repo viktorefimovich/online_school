@@ -1,21 +1,41 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .models import Payment, User
-from .serializers import PaymentSerializer, UserSerializer
+from .serializers import PaymentSerializer, UserSerializer, UserTokenObtainPairSerializer, UserTokenRefreshSerializer
 
 
-class UserViewSet(ModelViewSet):
+class UserRegisterAPIView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = "email"
+    permission_classes = [AllowAny]
 
 
 class UserRetrieveAPIView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class UserListAPIView(ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class UserUpdateAPIView(UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class UserDestroyAPIView(DestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class PaymentCreateAPIView(CreateAPIView):
@@ -48,3 +68,11 @@ class PaymentUpdateAPIView(UpdateAPIView):
 class PaymentDestroyAPIView(DestroyAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+
+
+class UserTokenObtainPairView(TokenObtainPairView):
+    serializer_class = UserTokenObtainPairSerializer
+
+
+class UserTokenRefreshView(TokenRefreshView):
+    serializer_class = UserTokenRefreshSerializer
