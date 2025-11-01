@@ -19,11 +19,11 @@ from users.views import (
 app_name = UsersConfig.name
 
 urlpatterns = [
-    path("register/", UserRegisterAPIView.as_view(), name="register"),
-    path("update/", UserUpdateAPIView.as_view(), name="user-update"),
-    path("list/", UserListAPIView.as_view(), name="user-list"),
-    path("<int:pk>/", UserRetrieveAPIView.as_view(), name="user-retrieve"),
-    path("delete/", UserDestroyAPIView.as_view(), name="user-delete"),
+    path("users/register/", UserRegisterAPIView.as_view(), name="register"),
+    path("users/update/", UserUpdateAPIView.as_view(), name="user-update"),
+    path("users/list/", UserListAPIView.as_view(), name="user-list"),
+    path("users/<int:pk>/", UserRetrieveAPIView.as_view(), name="user-retrieve"),
+    path("users/delete/", UserDestroyAPIView.as_view(), name="user-delete"),
     path("login/", UserTokenObtainPairView.as_view(), name="login"),
     path("token/refresh/", UserTokenRefreshView.as_view(), name="token_refresh"),
     path("payments/", PaymentListAPIView.as_view(), name="payments-list"),
