@@ -43,8 +43,7 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         data["user"] = {
             "id": self.user.id,
-            "email": self.user.email,
-            "username": self.user.username,
+            "email": self.user.email
         }
 
         return data
