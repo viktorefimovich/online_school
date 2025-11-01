@@ -24,7 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "email", "password", "phone", "city", "avatar"]
+        fields = ["id", "email", "phone", "city", "avatar"]
 
 
 class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
