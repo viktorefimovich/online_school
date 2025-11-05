@@ -28,9 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["id", "email", "password", "phone", "city", "avatar", "payments"]
 
-    extra_kwargs = {
-        "password": {"write_only": True}
-    }
+    extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
         password = validated_data.pop("password")
@@ -52,6 +50,7 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     Кастомный JWT-сериализатор, который возвращает access, refresh и данные пользователя.
     """
+
     username_field = "email"
 
     @classmethod
