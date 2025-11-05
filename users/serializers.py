@@ -20,11 +20,32 @@ class PaymentSerializer(ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор пользователя с добавлением поля платежи"""
 
+    password = serializers.CharField(write_only=True, required=True)
+
     payments = PaymentSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ["id", "email", "phone", "city", "avatar", "payments"]
+        fields = ["id", "email", "password", "phone", "city", "avatar", "payments"]
+
+    extra_kwargs = {
+        "password": {"write_only": True}
+    }
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = User.objects.create(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+        user = super().update(instance, validated_data)
+        if password:
+            user.set_password(password)
+            user.save()
+        return user
 
 
 class UserTokenObtainPairSerializer(TokenObtainPairSerializer):

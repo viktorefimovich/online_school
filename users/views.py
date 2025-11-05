@@ -14,7 +14,10 @@ class UserRegisterAPIView(CreateAPIView):
     permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
-        serializer.save(is_active=True)
+        user = serializer.save(is_active=True)
+
+        user.set_password(serializer.validated_data["password"])
+        user.save()
 
 
 class UserRetrieveAPIView(RetrieveAPIView):
@@ -100,6 +103,7 @@ class PaymentUpdateAPIView(UpdateAPIView):
 class PaymentDestroyAPIView(DestroyAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class UserTokenObtainPairView(TokenObtainPairView):
