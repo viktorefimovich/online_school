@@ -2,8 +2,6 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from lms.models import Course, Lesson
-
 
 class CustomUserManager(BaseUserManager):
     """Кастомный менеджер пользователей, где email является уникальным идентификатором"""
@@ -71,7 +69,7 @@ class User(AbstractUser):
 
 class Payment(models.Model):
     user = models.ForeignKey(
-        User,
+        "users.User",
         on_delete=models.CASCADE,
         verbose_name="Пользователь",
         help_text="Укажите пользователя",
@@ -85,8 +83,8 @@ class Payment(models.Model):
         help_text="Укажите способ оплаты",
     )
     payment_date = models.DateTimeField(verbose_name="Дата оплаты", help_text="Укажите дату оплаты")
-    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
-    lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True, blank=True)
+    course = models.ForeignKey("lms.Course", on_delete=models.SET_NULL, null=True, blank=True)
+    lesson = models.ForeignKey("lms.Lesson", on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"Платеж {self.user} за {self.course if self.course else self.lesson} сумма {self.amount}"
