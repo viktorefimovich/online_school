@@ -8,13 +8,13 @@ from lms.views import (
     LessonDestroyAPIView,
     LessonListAPIView,
     LessonRetrieveAPIView,
-    LessonUpdateAPIView,
+    LessonUpdateAPIView, SubscriptionToggleAPIView,
 )
 
 app_name = LmsConfig.name
 
 router = SimpleRouter()
-router.register("", CourseViewSet)
+router.register("courses", CourseViewSet)
 
 urlpatterns = [
     path("lesson/", LessonListAPIView.as_view(), name="lesson-list"),
@@ -22,6 +22,7 @@ urlpatterns = [
     path("lesson/create/", LessonCreateAPIView.as_view(), name="lesson-create"),
     path("lesson/<int:pk>/delete/", LessonDestroyAPIView.as_view(), name="lesson-delete"),
     path("lesson/<int:pk>/update/", LessonUpdateAPIView.as_view(), name="lesson-update"),
+    path("subscriptions/toggle/", SubscriptionToggleAPIView.as_view(), name="subscription-toggle"),
 ]
 
 urlpatterns += router.urls
