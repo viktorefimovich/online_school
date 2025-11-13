@@ -38,7 +38,7 @@ class CourseViewSet(ModelViewSet):
         return [permission() for permission in self.permission_classes]
 
     def get_queryset(self):
-        return Course.objects.all()
+        return Course.objects.all().order_by("id")
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -74,7 +74,7 @@ class LessonRetrieveAPIView(RetrieveAPIView):
     """
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated & (IsOwner | IsModerator)]
+    permission_classes = [IsOwnerOrModerator]
 
 
 class LessonUpdateAPIView(UpdateAPIView):
@@ -83,7 +83,7 @@ class LessonUpdateAPIView(UpdateAPIView):
     """
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated & (IsOwner | IsModerator)]
+    permission_classes = [IsAuthenticated, IsOwnerOrModerator]
 
 
 class LessonDestroyAPIView(DestroyAPIView):
@@ -92,7 +92,7 @@ class LessonDestroyAPIView(DestroyAPIView):
     """
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated & IsOwner & ~IsModerator]
+    permission_classes = [IsAuthenticated, IsOwner, ~IsModerator]
 
 
 class SubscriptionToggleAPIView(APIView):
