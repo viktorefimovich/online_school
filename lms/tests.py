@@ -16,10 +16,7 @@ class LessonTests(APITestCase):
         self.course = Course.objects.create(name="Тестовый курс", owner=self.user)
 
         self.lesson = Lesson.objects.create(
-            name="Тестовый урок",
-            course=self.course,
-            description="Описание урока",
-            owner=self.user
+            name="Тестовый урок", course=self.course, description="Описание урока", owner=self.user
         )
 
         self.list_url = reverse("lms:lesson-list")

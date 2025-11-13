@@ -5,6 +5,7 @@ class Course(models.Model):
     """
     Модель курсов.
     """
+
     name = models.CharField(
         max_length=100,
         verbose_name="Название курса",
@@ -39,6 +40,7 @@ class Lesson(models.Model):
     """
     Модель уроков.
     """
+
     name = models.CharField(max_length=150, verbose_name="Урок", help_text="Укажите урок")
     course = models.ForeignKey(
         "lms.Course",
@@ -81,17 +83,12 @@ class Subscription(models.Model):
     """
     Модель подписки пользователя на курс.
     """
+
     user = models.ForeignKey(
-        "users.User",
-        on_delete=models.CASCADE,
-        related_name="subscriptions",
-        verbose_name="Пользователь"
+        "users.User", on_delete=models.CASCADE, related_name="subscriptions", verbose_name="Пользователь"
     )
     course = models.ForeignKey(
-        "lms.Course",
-        on_delete=models.CASCADE,
-        related_name="subscriptions",
-        verbose_name="Курс"
+        "lms.Course", on_delete=models.CASCADE, related_name="subscriptions", verbose_name="Курс"
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата подписки")
 

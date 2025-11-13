@@ -5,6 +5,7 @@ class VideoLinkValidator:
     """
     Валидатор, который проверяет, что ссылка принадлежит домену youtube.com.
     """
+
     def __init__(self, field):
         self.field = field
 

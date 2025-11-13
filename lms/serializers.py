@@ -20,6 +20,7 @@ class CourseSerializer(ModelSerializer):
     """
     Сериализатор курсов
     """
+
     is_subscribed = SerializerMethodField()
 
     def get_is_subscribed(self, obj):

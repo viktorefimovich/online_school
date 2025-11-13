@@ -1,5 +1,11 @@
-from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, \
-    get_object_or_404
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    UpdateAPIView,
+    get_object_or_404,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,6 +22,7 @@ class CourseViewSet(ModelViewSet):
     """
     Контролер Курсов
     """
+
     queryset = Course.objects.all()
     pagination_class = CustomPagination
 
@@ -53,6 +60,7 @@ class LessonCreateAPIView(CreateAPIView):
     """
     Контролер создания урока
     """
+
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated & ~IsModerator]
@@ -62,6 +70,7 @@ class LessonListAPIView(ListAPIView):
     """
     Контролер списка уроков
     """
+
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated | IsModerator]
@@ -72,6 +81,7 @@ class LessonRetrieveAPIView(RetrieveAPIView):
     """
     Контролер урока детально
     """
+
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsOwnerOrModerator]
@@ -81,6 +91,7 @@ class LessonUpdateAPIView(UpdateAPIView):
     """
     Контролер обновления урока
     """
+
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrModerator]
@@ -90,6 +101,7 @@ class LessonDestroyAPIView(DestroyAPIView):
     """
     Контролер удаления урока
     """
+
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsOwner, ~IsModerator]
@@ -101,6 +113,7 @@ class SubscriptionToggleAPIView(APIView):
     Если подписка существует — удаляем.
     Если нет — создаём.
     """
+
     permission_classes = [IsAuthenticated]
 
     @staticmethod
