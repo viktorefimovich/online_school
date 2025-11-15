@@ -36,3 +36,11 @@ def create_product(item: Lesson | Course):
 
     product = stripe.Product.create(name=item.name, description=item.description)
     return product.get("id")
+
+
+def retrieve_session(session_id: str):
+    """
+    Получение данных о сессии
+    """
+    session = stripe.checkout.Session.retrieve(session_id)
+    return session

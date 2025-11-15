@@ -1,13 +1,21 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .models import Payment, User
-from .serializers import PaymentSerializer, UserSerializer, UserTokenObtainPairSerializer, UserTokenRefreshSerializer
-from .services import create_product, create_stripe_price, create_session
+from .serializers import (
+    PaymentSerializer,
+    UserSerializer,
+    UserTokenObtainPairSerializer,
+    UserTokenRefreshSerializer,
+    PaymentStatusSerializer,
+)
+from .services import create_product, create_stripe_price, create_session, retrieve_session
 
 
 class UserRegisterAPIView(CreateAPIView):
@@ -191,3 +199,34 @@ class UserTokenRefreshView(TokenRefreshView):
 
     serializer_class = UserTokenRefreshSerializer
     permission_classes = [AllowAny]
+
+
+class PaymentStatusAPIView(APIView):
+    """
+    Проверка статуса платежа по session_id.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def get(request, pk):
+        try:
+            payment = Payment.objects.get(pk=pk, user=request.user)
+        except Payment.DoesNotExist:
+            return Response({"error": "Платёж не найден"}, status=status.HTTP_404_NOT_FOUND)
+
+        if not payment.session_id:
+            return Response({"error": "У платежа нет session_id"}, status=status.HTTP_400_BAD_REQUEST)
+
+        session = retrieve_session(payment.session_id)
+
+        data = {
+            "session_id": session.id,
+            "status": session.status,
+            "payment_status": session.payment_status,
+            "amount_total": session.amount_total,
+            "currency": session.currency,
+        }
+
+        serializer = PaymentStatusSerializer(data)
+        return Response(serializer.data)
