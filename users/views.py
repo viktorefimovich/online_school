@@ -14,6 +14,7 @@ class UserRegisterAPIView(CreateAPIView):
     """
     Регистрация(создание) пользователя
     """
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
@@ -29,6 +30,7 @@ class UserRetrieveAPIView(RetrieveAPIView):
     """
     Подробное описание пользователя
     """
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -43,6 +45,7 @@ class UserListAPIView(ListAPIView):
     """
     Список пользователей
     """
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -52,6 +55,7 @@ class UserUpdateAPIView(UpdateAPIView):
     """
     Обновление информации о пользователе
     """
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -72,6 +76,7 @@ class UserDestroyAPIView(DestroyAPIView):
     """
     Удаление пользователя
     """
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -87,6 +92,7 @@ class PaymentCreateAPIView(CreateAPIView):
     """
     Создание платежа пользователя
     """
+
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
@@ -98,10 +104,7 @@ class PaymentCreateAPIView(CreateAPIView):
 
         product_id = create_product(item)
 
-        stripe_price = create_stripe_price(
-            amount=payment.amount,
-            product_id=product_id
-        )
+        stripe_price = create_stripe_price(amount=payment.amount, product_id=product_id)
         price_id = stripe_price.get("id")
 
         session_id, payment_url = create_session(price_id)
@@ -115,18 +118,21 @@ class PaymentCreateAPIView(CreateAPIView):
 
         payment = Payment.objects.get(id=response.data["id"])
 
-        return Response({
-            "payment_id": payment.id,
-            "amount": payment.amount,
-            "session_id": payment.session_id,
-            "payment_link": payment.payment_link,
-        })
+        return Response(
+            {
+                "payment_id": payment.id,
+                "amount": payment.amount,
+                "session_id": payment.session_id,
+                "payment_link": payment.payment_link,
+            }
+        )
 
 
 class PaymentListAPIView(ListAPIView):
     """
     Список платежей пользователя
     """
+
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -143,6 +149,7 @@ class PaymentRetrieveAPIView(RetrieveAPIView):
     """
     Платеж подробно
     """
+
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
@@ -152,6 +159,7 @@ class PaymentUpdateAPIView(UpdateAPIView):
     """
     Обновление информации о платеже
     """
+
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
@@ -161,6 +169,7 @@ class PaymentDestroyAPIView(DestroyAPIView):
     """
     Удаление платежа
     """
+
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
@@ -170,6 +179,7 @@ class UserTokenObtainPairView(TokenObtainPairView):
     """
     Получение токена доступа и токена сброса
     """
+
     serializer_class = UserTokenObtainPairSerializer
     permission_classes = [AllowAny]
 
@@ -178,5 +188,6 @@ class UserTokenRefreshView(TokenRefreshView):
     """
     Обновление токена сброса
     """
+
     serializer_class = UserTokenRefreshSerializer
     permission_classes = [AllowAny]
