@@ -2,10 +2,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .models import Payment, User
 from .serializers import PaymentSerializer, UserSerializer, UserTokenObtainPairSerializer, UserTokenRefreshSerializer
+from .services import create_product, create_stripe_price, create_session
 
 
 class UserRegisterAPIView(CreateAPIView):
@@ -90,7 +92,35 @@ class PaymentCreateAPIView(CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        payment = serializer.save(user=self.request.user)
+
+        item = payment.course if payment.course else payment.lesson
+
+        product_id = create_product(item)
+
+        stripe_price = create_stripe_price(
+            amount=payment.amount,
+            product_id=product_id
+        )
+        price_id = stripe_price.get("id")
+
+        session_id, payment_url = create_session(price_id)
+
+        payment.session_id = session_id
+        payment.payment_link = payment_url
+        payment.save()
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+
+        payment = Payment.objects.get(id=response.data["id"])
+
+        return Response({
+            "payment_id": payment.id,
+            "amount": payment.amount,
+            "session_id": payment.session_id,
+            "payment_link": payment.payment_link,
+        })
 
 
 class PaymentListAPIView(ListAPIView):
