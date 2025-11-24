@@ -14,6 +14,7 @@ from users.views import (
     UserTokenObtainPairView,
     UserTokenRefreshView,
     UserUpdateAPIView,
+    PaymentStatusAPIView,
 )
 
 app_name = UsersConfig.name
@@ -31,4 +32,5 @@ urlpatterns = [
     path("payments/<int:pk>/", PaymentRetrieveAPIView.as_view(), name="payments-retrieve"),
     path("payments/<int:pk>/update/", PaymentUpdateAPIView.as_view(), name="payments-update"),
     path("payments/<int:pk>/delete/", PaymentDestroyAPIView.as_view(), name="payments-delete"),
+    path("payments/<int:pk>/status/", PaymentStatusAPIView.as_view(), name="payment-status"),
 ]

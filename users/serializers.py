@@ -15,6 +15,7 @@ class PaymentSerializer(ModelSerializer):
     class Meta:
         model = Payment
         fields = "__all__"
+        read_only_fields = ("user", "payment_link", "session_id")
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -91,3 +92,15 @@ class UserTokenRefreshSerializer(TokenRefreshSerializer):
             pass
 
         return data
+
+
+class PaymentStatusSerializer(serializers.Serializer):
+    """
+    Сериализатор статуса платежа
+    """
+
+    session_id = serializers.CharField()
+    status = serializers.CharField()
+    amount_total = serializers.IntegerField()
+    currency = serializers.CharField()
+    payment_status = serializers.CharField()

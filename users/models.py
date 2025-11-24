@@ -85,6 +85,8 @@ class Payment(models.Model):
     payment_date = models.DateTimeField(verbose_name="Дата оплаты", help_text="Укажите дату оплаты")
     course = models.ForeignKey("lms.Course", on_delete=models.SET_NULL, null=True, blank=True)
     lesson = models.ForeignKey("lms.Lesson", on_delete=models.SET_NULL, null=True, blank=True)
+    payment_link = models.CharField(max_length=500, verbose_name="Ссылка на оплату", blank=True, null=True)
+    session_id = models.CharField(verbose_name="id сессии", blank=True, null=True)
 
     def __str__(self):
         return f"Платеж {self.user} за {self.course if self.course else self.lesson} сумма {self.amount}"
