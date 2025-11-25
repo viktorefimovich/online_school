@@ -1,9 +1,6 @@
 from celery import shared_task
 from django.core.mail import send_mail
-from django.conf import settings
 from django.utils import timezone
-
-from lms.models import Course, Subscription, Lesson
 
 
 @shared_task

@@ -27,10 +27,7 @@ class Course(models.Model):
         blank=True,
         help_text="Укажите владелца",
     )
-    last_notification_sent = models.DateTimeField(
-        verbose_name="Время последнего уведомления",
-        null=True, blank=True
-    )
+    last_notification_sent = models.DateTimeField(verbose_name="Время последнего уведомления", null=True, blank=True)
 
     def __str__(self):
         return f"{self.pk} | {self.name}"
