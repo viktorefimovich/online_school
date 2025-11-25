@@ -15,6 +15,7 @@ from lms.models import Course, Lesson, Subscription
 from lms.paginators import CustomPagination
 from lms.permissions import IsOwnerOrModerator
 from lms.serializers import CourseDetailSerializer, CourseSerializer, LessonSerializer
+from .tasks import send_course_update_email
 from users.permissions import IsModerator, IsOwner
 
 
@@ -49,6 +50,10 @@ class CourseViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        send_course_update_email.delay(course.id)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
