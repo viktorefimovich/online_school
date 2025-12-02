@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from django.utils import timezone
 from rest_framework.generics import (
     CreateAPIView,
     DestroyAPIView,
@@ -15,6 +18,7 @@ from lms.models import Course, Lesson, Subscription
 from lms.paginators import CustomPagination
 from lms.permissions import IsOwnerOrModerator
 from lms.serializers import CourseDetailSerializer, CourseSerializer, LessonSerializer
+from .tasks import send_course_update_emails, send_notification_email
 from users.permissions import IsModerator, IsOwner
 
 
@@ -49,6 +53,10 @@ class CourseViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        send_course_update_emails.delay(course.id)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -95,6 +103,23 @@ class LessonUpdateAPIView(UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrModerator]
+
+    def perform_update(self, serializer):
+        lesson = serializer.save()
+
+        course = lesson.course
+        if not course:
+            return
+
+        now = timezone.now()
+        if not course.last_notification_sent or (now - course.last_notification_sent) >= timedelta(hours=4):
+            subscriptions = Subscription.objects.filter(course=course)
+            for sub in subscriptions:
+                send_notification_email.delay(sub.user.email, course, lesson)
+
+            # Обновляем время последнего уведомления
+            course.last_notification_sent = now
+            course.save()
 
 
 class LessonDestroyAPIView(DestroyAPIView):
