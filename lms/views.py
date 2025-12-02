@@ -18,7 +18,7 @@ from lms.models import Course, Lesson, Subscription
 from lms.paginators import CustomPagination
 from lms.permissions import IsOwnerOrModerator
 from lms.serializers import CourseDetailSerializer, CourseSerializer, LessonSerializer
-from .tasks import send_course_update_emails, send_notification_email
+from .tasks import send_course_update_emails
 from users.permissions import IsModerator, IsOwner
 
 
