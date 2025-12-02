@@ -56,7 +56,12 @@ class CourseViewSet(ModelViewSet):
 
     def perform_update(self, serializer):
         course = serializer.save()
-        send_course_update_emails.delay(course.id)
+        now = timezone.now()
+
+        if not course.last_notification_sent or (now - course.last_notification_sent) >= timedelta(hours=4):
+            course.last_notification_sent = now
+            course.save(update_fields=["last_notification_sent"])
+            send_course_update_emails.delay(course.id, None)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
