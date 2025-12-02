@@ -106,20 +106,16 @@ class LessonUpdateAPIView(UpdateAPIView):
 
     def perform_update(self, serializer):
         lesson = serializer.save()
-
         course = lesson.course
         if not course:
             return
 
         now = timezone.now()
         if not course.last_notification_sent or (now - course.last_notification_sent) >= timedelta(hours=4):
-            subscriptions = Subscription.objects.filter(course=course)
-            for sub in subscriptions:
-                send_notification_email.delay(sub.user.email, course, lesson)
 
-            # Обновляем время последнего уведомления
             course.last_notification_sent = now
-            course.save()
+            course.save(update_fields=["last_notification_sent"])
+            send_course_update_emails.delay(course.id, lesson.id)
 
 
 class LessonDestroyAPIView(DestroyAPIView):
