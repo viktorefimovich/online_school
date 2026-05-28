@@ -1,0 +1,41 @@
+# Git / IDE
+.git
+.gitignore
+.idea
+.vscode
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.pytest_cache
+.mypy_cache
+.coverage
+.coverage.*
+htmlcov
+*.egg-info
+
+# Venv
+.venv
+venv
+env
+ENV
+
+# Docker / env
+.env
+.env.sample
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Django runtime
+media
+staticfiles
+*.log
+db.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
