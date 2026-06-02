@@ -1,0 +1,146 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop, "feature/**"]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    name: Lint with flake8
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pipx install poetry==1.8.3
+
+      - name: Install dependencies (с lint-группой)
+        run: poetry install --no-root --with lint
+
+      - name: Run flake8
+        run: poetry run flake8 .
+
+  test:
+    name: Run Django tests
+    needs: lint
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pipx install poetry==1.8.3
+
+      - name: Install dependencies
+        run: poetry install --no-root --without lint
+
+      - name: Run tests
+        env:
+          SECRET_KEY: test-secret-key-for-ci
+          DEBUG: "False"
+          ALLOWED_HOSTS: localhost,127.0.0.1
+          DATABASE_NAME: test_db
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          REDIS_URL: redis://localhost:6379/0
+          STRIPE_SECRET_KEY: dummy
+          STRIPE_PUBLISHABLE_KEY: dummy
+          EMAIL_HOST: localhost
+          EMAIL_PORT: "25"
+          EMAIL_HOST_USER: ""
+          EMAIL_HOST_PASSWORD: ""
+          EMAIL_USE_TLS: "False"
+          EMAIL_USE_SSL: "False"
+        run: poetry run python manage.py test
+
+  build-and-push:
+    name: Build and push Docker image
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            viktorefimovich/online_school:latest
+            viktorefimovich/online_school:${{ github.sha }}
+          cache-from: type=registry,ref=viktorefimovich/online_school:buildcache
+          cache-to: type=registry,ref=viktorefimovich/online_school:buildcache,mode=max
+
+  deploy:
+    name: Deploy to server
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/online_school
+            git pull origin main
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d
+            docker image prune -f
